@@ -1,11 +1,14 @@
 import React from "react";
 
-function GuessInput() {
+function GuessInput({ handleAddGuess }) {
     const [wordInput, setWordInput] = React.useState("");
 
     const handleSumbitWord = (event) => {
         event.preventDefault();
-        console.log({ guess: wordInput });
+        handleAddGuess({
+            id: crypto.randomUUID(),
+            value: wordInput,
+        });
         setWordInput("");
     };
 
