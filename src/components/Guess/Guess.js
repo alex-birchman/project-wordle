@@ -1,36 +1,21 @@
 import React from "react";
 
 import { range } from "../../utils";
-import { checkGuess } from "../../game-helpers";
 
-function Guess({ word, answer }) {
-    const letters = checkGuess(word, answer);
-    const checkedLetters = Object.entries(letters).map(
-        ([_, { letter, status }]) => {
-            return {
-                letter,
-                status,
-            };
-        }
-    );
+function Guess({ word }) {
+    const letters = range(0, 5).map((item) => ({
+        id: crypto.randomUUID(),
+        letter: word.length > item ? word[item].letter : undefined,
+        className: word.length > item ? word[item].status : undefined,
+    }));
 
     return (
         <p className="guess">
-            {range(0, 5).map((item) => {
-                let letter = undefined;
-                let letterClass = "";
-
-                if (item < checkedLetters.length) {
-                    letter = checkedLetters[item].letter;
-                    letterClass = checkedLetters[item].status;
-                }
-
-                return (
-                    <span key={item} className={`cell ${letterClass}`}>
-                        {letter}
-                    </span>
-                );
-            })}
+            {letters.map(({ id, letter, className }) => (
+                <span key={id} className={`cell ${className}`}>
+                    {letter}
+                </span>
+            ))}
         </p>
     );
 }
