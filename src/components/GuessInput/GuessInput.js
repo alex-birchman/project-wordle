@@ -7,7 +7,7 @@ function GuessInput({ handleAddGuess }) {
         event.preventDefault();
         handleAddGuess({
             id: crypto.randomUUID(),
-            value: wordInput,
+            word: wordInput,
         });
         setWordInput("");
     };
@@ -16,6 +16,7 @@ function GuessInput({ handleAddGuess }) {
         <form className="guess-input-wrapper" onSubmit={handleSumbitWord}>
             <label htmlFor="guess-input">Enter guess:</label>
             <input
+                required
                 id="guess-input"
                 type="text"
                 value={wordInput}
