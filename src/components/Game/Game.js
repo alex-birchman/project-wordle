@@ -2,6 +2,7 @@ import React from "react";
 
 import { sample } from "../../utils";
 import { WORDS } from "../../data";
+import { NUM_OF_GUESSES_ALLOWED } from "../../constants";
 
 import GuessInput from "../GuessInput/GuessInput";
 import GuessResults from "../GuessResults/GuessResults";
@@ -15,7 +16,8 @@ function Game() {
     const [guesses, setGuesses] = React.useState([]);
 
     const handleAddGuess = (guess) => {
-        setGuesses((prevGuesses) => [...prevGuesses, guess]);
+        if (guesses.length < NUM_OF_GUESSES_ALLOWED)
+            setGuesses((prevGuesses) => [...prevGuesses, guess]);
     };
 
     return (
