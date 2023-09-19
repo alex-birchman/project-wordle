@@ -19,7 +19,7 @@ function GuessInput({ handleAddGuess }) {
                 id="guess-input"
                 type="text"
                 value={wordInput}
-                pattern="[A-Z]{5}"
+                pattern="[A-Z]{1,5}"
                 onChange={(event) => {
                     return setWordInput(event.target.value.toUpperCase());
                 }}
