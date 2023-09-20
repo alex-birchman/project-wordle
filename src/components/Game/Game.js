@@ -2,68 +2,89 @@ import React from "react";
 
 import { sample } from "../../utils";
 import { WORDS } from "../../data";
-import { checkGuess } from "../../game-helpers";
-import { NUM_OF_GUESSES_ALLOWED, GAME_RESULT } from "../../constants";
+import { checkGuess, makeGameGrid } from "../../game-helpers";
+import {
+    NUM_OF_GUESSES_ALLOWED,
+    NUM_OF_LETTERS_ALLOWED,
+    GAME_STATUS,
+    LETTER_STATUS,
+} from "../../constants";
 
 import GuessInput from "../GuessInput/GuessInput";
 import GuessResults from "../GuessResults/GuessResults";
+import GuessKeyboard from "../GuessKeyboard/GuessKeyboard";
 import Banner from "../Banner/Banner";
 
-// Pick a random word on every pageload.
-const answer = sample(WORDS);
-// To make debugging easier, we'll log the solution in the console.
-console.info({ answer });
-
 function Game() {
-    const [gameResult, setGameResult] = React.useState(GAME_RESULT.IN_PROGRESS);
-    const [guesses, setGuesses] = React.useState([]);
-    const isGameOver = gameResult !== GAME_RESULT.IN_PROGRESS;
+    const [answer, setAnswer] = React.useState(sample(WORDS));
+    const [gameStatus, setGameStatus] = React.useState(GAME_STATUS.IN_PROGRESS);
+    const [userGuessesCount, setUserGuessesCount] = React.useState(0);
+    const [guesses, setGuesses] = React.useState(
+        makeGameGrid(NUM_OF_GUESSES_ALLOWED, NUM_OF_LETTERS_ALLOWED)
+    );
+    const isGameOver = gameStatus !== GAME_STATUS.IN_PROGRESS;
 
     const handleAddGuess = (guess) => {
-        const guessCheckedResult = {
-            id: guess.id,
-            word: Object.entries(checkGuess(guess.word, answer)).map(
-                ([_, { letter, status }]) => {
-                    return {
-                        letter,
-                        status,
-                    };
-                }
-            ),
-        };
+        const guessCheckedResult = Object.entries(
+            checkGuess(guess, answer)
+        ).map(([_, { letter, status }]) => {
+            return {
+                letter,
+                status,
+            };
+        });
 
         const nextGuesses = [...guesses];
 
-        if (nextGuesses.length < NUM_OF_GUESSES_ALLOWED) {
-            nextGuesses.push(guessCheckedResult);
+        if (userGuessesCount < NUM_OF_GUESSES_ALLOWED) {
+            const updatedGuessRow = nextGuesses[userGuessesCount].word.map(
+                (letter, index) => ({
+                    id: letter.id,
+                    ...guessCheckedResult[index],
+                })
+            );
+            nextGuesses[userGuessesCount].word = updatedGuessRow;
             setGuesses(nextGuesses);
         }
 
+        let nextAnsweredWords = userGuessesCount + 1;
+        setUserGuessesCount(nextAnsweredWords);
+
         if (
-            guessCheckedResult.word.length === 5 &&
-            guessCheckedResult.word.every(
-                (letter) => letter.status === "correct"
+            nextGuesses[userGuessesCount].word.every(
+                (letter) => letter.status === LETTER_STATUS.CORRECT
             )
         ) {
-            setGameResult(GAME_RESULT.WON);
+            setGameStatus(GAME_STATUS.WON);
             return;
         }
 
-        if (nextGuesses.length === NUM_OF_GUESSES_ALLOWED) {
-            setGameResult(GAME_RESULT.LOOSE);
+        if (nextAnsweredWords === NUM_OF_GUESSES_ALLOWED) {
+            setGameStatus(GAME_STATUS.LOOSE);
             return;
         }
+    };
+
+    const handleRestartGame = () => {
+        setAnswer(sample(WORDS));
+        setGameStatus(GAME_STATUS.IN_PROGRESS);
+        setUserGuessesCount(0);
+        setGuesses(
+            makeGameGrid(NUM_OF_GUESSES_ALLOWED, NUM_OF_LETTERS_ALLOWED)
+        );
     };
 
     return (
         <>
             <GuessResults guesses={guesses} />
             <GuessInput handleAddGuess={handleAddGuess} disabled={isGameOver} />
+            <GuessKeyboard guesses={guesses} />
             {isGameOver && (
                 <Banner
-                    gameResult={gameResult}
-                    guesses={guesses}
+                    gameStatus={gameStatus}
+                    userGuessesCount={userGuessesCount}
                     answer={answer}
+                    handleRestartGame={handleRestartGame}
                 />
             )}
         </>

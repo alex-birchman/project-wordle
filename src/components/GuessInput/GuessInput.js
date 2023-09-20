@@ -1,14 +1,13 @@
 import React from "react";
 
+import { NUM_OF_LETTERS_ALLOWED } from "../../constants";
+
 function GuessInput({ handleAddGuess, disabled = false }) {
     const [wordInput, setWordInput] = React.useState("");
 
     const handleSumbitWord = (event) => {
         event.preventDefault();
-        handleAddGuess({
-            id: crypto.randomUUID(),
-            word: wordInput,
-        });
+        handleAddGuess(wordInput);
         setWordInput("");
     };
 
@@ -21,7 +20,7 @@ function GuessInput({ handleAddGuess, disabled = false }) {
                 id="guess-input"
                 type="text"
                 value={wordInput}
-                pattern="[A-Z]{1,5}"
+                pattern={`[A-Z]{${NUM_OF_LETTERS_ALLOWED}}`}
                 onChange={(event) => {
                     return setWordInput(event.target.value.toUpperCase());
                 }}

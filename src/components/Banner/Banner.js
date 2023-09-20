@@ -1,24 +1,25 @@
 import React from "react";
 
-import { GAME_RESULT } from "../../constants";
+import { GAME_STATUS } from "../../constants";
 
-function Banner({ gameResult, guesses, answer }) {
+function Banner({ gameStatus, userGuessesCount, answer, handleRestartGame }) {
     return (
         <div
             className={`banner ${
-                gameResult === GAME_RESULT.WON ? "happy" : "sad"
+                gameStatus === GAME_STATUS.WON ? "happy" : "sad"
             }`}
         >
-            {gameResult === GAME_RESULT.WON ? (
+            {gameStatus === GAME_STATUS.WON ? (
                 <p>
                     <strong>Congratulations!</strong> Got it in{" "}
-                    <strong>{guesses.length} guesses</strong>.
+                    <strong>{userGuessesCount} guesses</strong>.
                 </p>
             ) : (
                 <p>
                     Sorry, the correct answer is <strong>{answer}</strong>.
                 </p>
             )}
+            <button onClick={handleRestartGame}>Restart Game</button>
         </div>
     );
 }
