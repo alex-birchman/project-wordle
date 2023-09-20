@@ -1,4 +1,4 @@
-# Word Game
+# Word Game | [DEMO](https://alex-birchman.github.io/project-wordle/)
 
 ## Joy of React, Project I
 
