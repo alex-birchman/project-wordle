@@ -4,7 +4,7 @@ function Guess({ word }) {
     return (
         <p className="guess">
             {word.map(({ id, letter, status }) => (
-                <span key={id} className={`cell ${status}`}>
+                <span key={id} className={`cell ${status ?? ""}`}>
                     {letter}
                 </span>
             ))}
